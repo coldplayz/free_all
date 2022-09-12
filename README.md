@@ -10,8 +10,8 @@
 ## Syntax
 ---
 ```C
-mallocd_t mallocd_adds(mallocd_t *mall_adds, char *type, ...); /* Collects and stores malloc'd pointers */
-free_mallocd(char *skip, ...); /* frees malloc'd addresses supplied to mallocd_adds() */
+mallocd_t *mallocd_adds(mallocd_t *mall_adds, char *type, ...); /* Collects and stores malloc'd pointers */
+void free_mallocd(char *skip, ...); /* frees malloc'd addresses supplied to mallocd_adds() */
 ```
 
 ## Usage
