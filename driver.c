@@ -17,11 +17,11 @@
 #define pd(x) (printf("%d\n", (x)))
 #define plu(x) (printf("%lu\n", (x)))
 
-
+void test(void);
 
 int main(void)
 {
-	static mallocd_t mallocd;
+	mallocd_t mallocd;
 	int *pti;
 	char *ptc, **pptc;
 
@@ -37,7 +37,18 @@ int main(void)
 	pptc = malloc(16);
 	mallocd_adds(NULL, "p", pptc);
 
+	test();
+
 	free_mallocd(NULL);
 
 	return (0);
+}
+
+void test(void)
+{
+	char *ptc;
+
+	ptc = malloc(1024);
+	mallocd_adds(NULL, "c", ptc);
+	ptc[0] = 's';
 }

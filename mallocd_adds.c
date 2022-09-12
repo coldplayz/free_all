@@ -75,7 +75,7 @@ mallocd_t *mallocd_adds(mallocd_t *mallocd, char *type, ...)
 		switch (type[i])
 		{
 			case 'c':
-				for (j = 0; ci <= 99; i++)
+				for (j = 0; ci <= 99; j++)
 				{
 					if (!ptmt->ptc[ci] && (ci <= 99))
 					{
@@ -93,7 +93,7 @@ mallocd_t *mallocd_adds(mallocd_t *mallocd, char *type, ...)
 				}
 				break;
 			case 'i':
-				for (j = 0; ii <= 99; i++)
+				for (j = 0; ii <= 99; j++)
 				{
 					if (!ptmt->pti[ii] && (ii <= 99))
 					{
@@ -111,7 +111,7 @@ mallocd_t *mallocd_adds(mallocd_t *mallocd, char *type, ...)
 				}
 				break;
 			case 'p':
-				for (j = 0; pi <= 99; i++)
+				for (j = 0; pi <= 99; j++)
 				{
 					if (!ptmt->pptc[pi] && (pi <= 99))
 					{
@@ -200,7 +200,7 @@ void handle_dup_ptrs(mallocd_t *mallocd)
 void free_mallocd(char *skip, ...)
 {
 	va_list ap;
-	int i, n, *pti[10], flag = 0;
+	int i, *pti[10];
 	char *ptc[10], **pptc[10];
 
 	for (i = 0; i < 10; i++) /* initialize exclusion arrays */
