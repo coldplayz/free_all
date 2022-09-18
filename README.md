@@ -20,9 +20,9 @@ void free_mallocd(char *skip, ...); /* frees malloc'd addresses supplied to mall
 *To be compiled with a C program. I would love any feedbacks, suggestions and bug report(s).*
 *These can be sent to my [email](greenbel.chibuike@gmail.com) at greenbel.chibuike@gmail.com*
 
-1. Create an instance of a stuct of type mallocd_t in your program's `main()` function. For example:
+1. Create an instance of a struct of type mallocd_t in your program's `main()` function. For example:
    `mallocd_t mall_adds;`
-2. Supply it's address to the program like so: `mallocd_adds(&mall_adds, type);`
+2. Still in main, supply it's address to the program like so: `mallocd_adds(&mall_adds, type);`
 
    where mall_adds is a struct of type mallocd_t, and 'type' is a string whose
    characters point to the type of malloc'd pointers supplied as optional
@@ -41,6 +41,7 @@ void free_mallocd(char *skip, ...); /* frees malloc'd addresses supplied to mall
    be called like so: `mallocd_adds(NULL, "c", ptc);`. And to store a pointer to char,
    pointer to int and pointer-to-pointer to char named 'ptc', 'pti', and 'pptc' respectively,
    we go: `mallocd_adds(NULL, "cip", ptc, pti, pptc);`.
+   
 4. When the user is ready to free addresses, the user calls free_mallocd() like so:
    `free_mallocd(skip, [addresses]);` where 'skip' is a string whose characters point
    to the type of malloc'd pointers supplied as optional arguments, if any.
@@ -63,8 +64,14 @@ This includes memory allocated by the standard's `realloc()`. Supplying addresse
 using `free()` to `mallocd_adds()` would result in invalid free as seen during the use of valgrind's mem check.
 
 The total number of addresses, of each currently supported pointer type, that can be stored is 128 at the moment.
-When the storage buffer for any of the types gets full (of 'unfreed' addresses), a warning will be sent to stdout
+When the storage buffer for any of the types gets full (of 'unfreed' addresses), a warning will be sent to stderr
 to indicate this. I'm currently working on improving that limit in a way that doesn't adversely affect program speed.
 
 Combining the use of smart positioning of `free_mallocd()` and its pointer-skipping feature can help mitigate the
 negative effects of the current limit. Once `free_mallocd()` is called, buffer space is also freed to accomodate more pointers.
+
+This program handles duplicate pointers (from passing an address more than once to `mallocd_adds()`) and multiple calls to
+`free_mallocd()`, provided the restriction on the use of the standard's `free()` is honoured.
+
+Despite the handling of duplicate pointers, it is adviced to perform malloc()/calloc() and `malloc_adds()` calls atomically. That
+means, once a call to `malloc()` or `calloc()` is successfull, the returned address should immediately be supplied to `mallocd_adds()`.
