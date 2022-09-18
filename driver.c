@@ -38,7 +38,6 @@ int main(void)
 	mallocd_adds(NULL, "p", pptc);
 
 	test();
-
 	free_mallocd(NULL);
 
 	return (0);
@@ -51,4 +50,5 @@ void test(void)
 	ptc = malloc(1024);
 	mallocd_adds(NULL, "c", ptc);
 	ptc[0] = 's';
+	free_mallocd(NULL);
 }

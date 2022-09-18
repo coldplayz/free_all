@@ -27,7 +27,11 @@ typedef struct list_s
  * struct shell - a data structure for variables whose values
  * need to be accessed and/or modified at different stack levels.
  * @exstat: exit status of last launched program/command.
+ * @envp: address of the environment.
  * @alias: array of strings representing the alias list.
+ * @newalias: command-line array of strings of potentially new aliases to set.
+ * @is_aliascmd: an int storing 1 when the
+ * "alias" command is given, and 0 by default.
  * @loop_cnt: keeps record of the number of
  * times the shell's main loop has been run.
  * @name: the program name.
@@ -40,12 +44,17 @@ typedef struct list_s
  * @quote: an int determining whether to tokenize quoted strings (0) or not (1)
  * @free0: an int determining whether to free str_ar[0] or not (0).
  * @bltin_nm: array of strings storing the names of built-in shell commands.
+ * @pid: an object storing the shell's process id.
+ * @noscript: int indicating whether input is from a script file (0), or not (1).
  * @content: a message string about the struct contents.
  */
 typedef struct shell
 {
 	int exstat;
+	char ***envp;
 	char **alias;
+	char **newalias;
+	int is_aliascmd;
 	unsigned long int loop_cnt;
 	char *name;
 	int pti[2];
@@ -55,8 +64,11 @@ typedef struct shell
 	int quote;
 	int free0;
 	char *bltin_nm[7];
+	pid_t pid;
+	int noscript;
 	char *content;
 } shell_t;
+
 
 /**
  * struct mallocd - structure storing static
@@ -67,9 +79,12 @@ typedef struct shell
  */
 typedef struct mallocd
 {
-	char *ptc[100];
-	int *pti[100];
-	char **pptc[100];
+	char *ptc[128];
+	int *pti[128];
+	char **pptc[128];
+	int ci;
+	int ii;
+	int pi;
 } mallocd_t;
 
 
@@ -224,7 +239,14 @@ int pah(unsigned int n);
 int *printptr(void *p);
 int num_len(int n);
 
-/* dynamic memory allocation and freeing project */
+
+/* string operations */
+int str2posint(char *str);
+void tr2(char **str, char delim);
+int wild_srch(char *str, char *sub_str);
+
+
+/* management of dynamically allocated memory */
 mallocd_t *mallocd_adds(mallocd_t *mallocd, char *type, ...);
 void init_mallocd(mallocd_t *mallocd);
 void handle_dup_ptrs(mallocd_t *mallocd);
@@ -234,15 +256,11 @@ void freepti(int **pti);
 void freepptc(char ***pptc);
 
 
-/* string operations */
-int str2posint(char *str);
-void tr2(char **str, char delim);
-
-
 /* simple shell */
 char **str_arr(char *str, const char *delim);
 char *strtok2(char *str, const char *delim, int quote);
-void handle_realloc(char ***str_ar, int i, int bsize, int *bsize_total);
+void handle_realloc(char ***str_ar, int i,
+		int bsize, int *old_bsize, int *bsize_total);
 void handle_realloc2(char **buff,
 		unsigned int *old_bsize, unsigned int *bsize, char *line);
 size_t handle_strlen(char *str, size_t len, int i, int n);
@@ -305,6 +323,14 @@ int is_mult_cmd(char *line);
 int is_ORAND(char *str);
 int mult_cmd_launcherORAND(char *shell_nm, int *b, char ***envp,
 		int *status, int *_free, char **bltin_nm, char *line);
+char *getalias(char *name);
+char *isalias(const char *cmd_name);
+int char_srchANY(char *str, char xter);
+int is_newalias(char *cmd_name);
+char *itoa2(int n);
+ssize_t EOF_handler(char **buff, unsigned int old_size, int a,
+		ssize_t m, size_t *n, char **line, unsigned int bsize);
+ssize_t handle_script(char *name, char **line, size_t *n);
 
 
 
